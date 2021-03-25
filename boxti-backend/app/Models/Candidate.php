@@ -3,9 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 
-class ModelsCandidate extends Model
+class Candidate extends Model
 {
     use HasFactory;
 
@@ -20,4 +21,8 @@ class ModelsCandidate extends Model
     ];
 
     protected $dates = ['deleted_at'];
+
+    function stacks() {
+        return $this->belongsToMany('App\Models\Stack', 'candidate_stacks');
+    }
 }
