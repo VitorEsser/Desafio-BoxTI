@@ -18,6 +18,11 @@ export default new Router({
             path: '/form-candidate',
             name: 'FormCandidate',
             component: FormCandidate,
-        }
+        },
+        {
+            path: '/form-candidate/:id',
+            name: 'EditCandidate',
+            component: FormCandidate,
+        },
     ]
 })

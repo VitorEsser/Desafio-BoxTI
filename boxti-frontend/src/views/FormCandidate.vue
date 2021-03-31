@@ -114,24 +114,27 @@
 
 <script>
 import axios from "axios"
+// import route from "@/router/"
 export default {
   name: "FormCandidate",
+  created () {
+    this.getStacks()
+    if (this.$route.params.id) {
+      this.getCandidateInfo(this.$route.params.id)
+    }
+  },
   data() {
     return {
       stacks: [],
       candidate: {},
       cpfRules: [
         (v) => !!v || "Este campo é obrigatório",
-        (v) => v.length <= 11 || "Máximo 11 números",
         (v) => /^\d+$/.test(v) || "Este campo aceita somente números",
       ],
       requiredRules: [(v) => !!v || "Este campo é obrigatório"],
       date: new Date().toISOString().substr(0, 10),
       modal: false,
     };
-  },
-  created() {
-    this.getStacks()
   },
   watch: {
     date() {
@@ -158,14 +161,39 @@ export default {
       });
     },
     saveCandidate() {
+      if (!this.$route.params.id) {
         axios
         .post("http://localhost:8000/api/candidates/", this.candidate)
             .then(response => {
-                this.log.console(response)
+                alert("Cadastro feito com sucesso!");
+                this.$router.push({name: 'ListCandidate'})
+                console.log(response)
             })
             .catch((error) => {
                 alert(error.response.data.error);
             });
+      } else {
+        axios
+        .put(`http://localhost:8000/api/candidates/${this.$route.params.id}`, this.candidate)
+            .then(response => {
+                alert("Edição do técnico feita com sucesso!");
+                this.$router.push({name: 'ListCandidate'})
+                console.log(response)
+            });
+      }
+    },
+    getCandidateInfo(candidateID) {
+      axios
+        .request({
+          baseURL: "http://localhost:8000",
+          method: "get",
+          url: `/api/candidates/${candidateID}`
+        })
+        .then(res => {
+          this.candidate = res.data
+          this.candidate.date_birth = this.formatDate(res.data.date_birth)
+          console.log(res)
+        });
     }
   },
 };
